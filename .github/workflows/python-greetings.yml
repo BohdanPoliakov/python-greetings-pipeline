@@ -8,25 +8,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone python app
-        uses: actions/checkout@v4
+      - name: Run install composite action
+        uses: ./.github/actions/install-python-deps
         with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-
-      - name: Show message
-        run: echo "Installing dependencies..."
-
-      - name: Create virtual environment
-        run: python3 -m venv venv
-        working-directory: python-greetings
-
-      - name: Install requirements
-        run: ./venv/bin/python -m pip install -r requirements.txt
-        working-directory: python-greetings
+          app_path: python-greetings
 
   deploy-to-dev:
     runs-on: self-hosted
