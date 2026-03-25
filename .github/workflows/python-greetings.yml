@@ -21,11 +21,8 @@ jobs:
     needs: install-pip-deps
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Run deploy composite action for DEV
-        uses: ./.github/actions/deploy-greetings
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-greetings
         with:
           app_path: python-greetings
           env_name: dev
@@ -36,21 +33,14 @@ jobs:
     needs: deploy-to-dev
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone test repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: mtararujs/course-js-api-framework
           path: tests
-
-      - name: Install npm dependencies
-        run: npm install
+      - run: npm install
         working-directory: tests
-
-      - name: Run tests on dev
-        run: npm run greetings greetings_dev
+      - run: npm run greetings greetings_dev
         working-directory: tests
 
   deploy-to-stg:
@@ -58,52 +48,26 @@ jobs:
     needs: tests-on-dev
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone python app
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-greetings
         with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-
-      - name: Stop old app
-        run: pm2 delete greetings-stg || true
-
-      - name: Create virtual environment
-        run: python3 -m venv venv
-        working-directory: python-greetings
-
-      - name: Install requirements
-        run: ./venv/bin/python -m pip install -r requirements.txt
-        working-directory: python-greetings
-
-      - name: Start app on port 7002
-        run: |
-          pm2 start "./venv/bin/python app.py --port=7002" --name greetings-stg
-          pm2 save
-        working-directory: python-greetings
+          app_path: python-greetings
+          env_name: stg
+          port: "7002"
 
   tests-on-stg:
     runs-on: self-hosted
     needs: deploy-to-stg
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone test repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: mtararujs/course-js-api-framework
           path: tests
-
-      - name: Install npm dependencies
-        run: npm install
+      - run: npm install
         working-directory: tests
-
-      - name: Run tests on stg
-        run: npm run greetings greetings_stg
+      - run: npm run greetings greetings_stg
         working-directory: tests
 
   deploy-to-preprod:
@@ -111,52 +75,26 @@ jobs:
     needs: tests-on-stg
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone python app
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-greetings
         with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-
-      - name: Stop old app
-        run: pm2 delete greetings-preprod || true
-
-      - name: Create virtual environment
-        run: python3 -m venv venv
-        working-directory: python-greetings
-
-      - name: Install requirements
-        run: ./venv/bin/python -m pip install -r requirements.txt
-        working-directory: python-greetings
-
-      - name: Start app on port 7003
-        run: |
-          pm2 start "./venv/bin/python app.py --port=7003" --name greetings-preprod
-          pm2 save
-        working-directory: python-greetings
+          app_path: python-greetings
+          env_name: preprod
+          port: "7003"
 
   tests-on-preprod:
     runs-on: self-hosted
     needs: deploy-to-preprod
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone test repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: mtararujs/course-js-api-framework
           path: tests
-
-      - name: Install npm dependencies
-        run: npm install
+      - run: npm install
         working-directory: tests
-
-      - name: Run tests on preprod
-        run: npm run greetings greetings_preprod
+      - run: npm run greetings greetings_preprod
         working-directory: tests
 
   deploy-to-prod:
@@ -164,50 +102,24 @@ jobs:
     needs: tests-on-preprod
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone python app
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/deploy-greetings
         with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-
-      - name: Stop old app
-        run: pm2 delete greetings-prod || true
-
-      - name: Create virtual environment
-        run: python3 -m venv venv
-        working-directory: python-greetings
-
-      - name: Install requirements
-        run: ./venv/bin/python -m pip install -r requirements.txt
-        working-directory: python-greetings
-
-      - name: Start app on port 7004
-        run: |
-          pm2 start "./venv/bin/python app.py --port=7004" --name greetings-prod
-          pm2 save
-        working-directory: python-greetings
+          app_path: python-greetings
+          env_name: prod
+          port: "7004"
 
   tests-on-prod:
     runs-on: self-hosted
     needs: deploy-to-prod
 
     steps:
-      - name: Checkout pipeline repo
-        uses: actions/checkout@v4
-
-      - name: Clone test repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: mtararujs/course-js-api-framework
           path: tests
-
-      - name: Install npm dependencies
-        run: npm install
+      - run: npm install
         working-directory: tests
-
-      - name: Run tests on prod
-        run: npm run greetings greetings_prod
+      - run: npm run greetings greetings_prod
         working-directory: tests
