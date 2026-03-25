@@ -1,0 +1,33 @@
+name: Install Python Dependencies
+description: Clone python-greetings repo, create virtual environment and install dependencies
+
+inputs:
+  app_path:
+    description: Directory where python-greetings repo will be cloned
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v4
+
+    - name: Clone python-greetings repository
+      uses: actions/checkout@v4
+      with:
+        repository: mtararujs/python-greetings
+        path: ${{ inputs.app_path }}
+
+    - name: Show install info
+      shell: bash
+      run: echo "Creating Python virtual environment and installing dependencies..."
+
+    - name: Create virtual environment
+      shell: bash
+      working-directory: ${{ inputs.app_path }}
+      run: python3 -m venv venv
+
+    - name: Install Python dependencies
+      shell: bash
+      working-directory: ${{ inputs.app_path }}
+      run: ./venv/bin/python -m pip install -r requirements.txt
