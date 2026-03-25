@@ -24,28 +24,12 @@ jobs:
       - name: Checkout pipeline repo
         uses: actions/checkout@v4
 
-      - name: Clone python app
-        uses: actions/checkout@v4
+      - name: Run deploy composite action for DEV
+        uses: ./.github/actions/deploy-greetings
         with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-
-      - name: Stop old app (if exists)
-        run: pm2 delete greetings-dev || true
-
-      - name: Create virtual environment
-        run: python3 -m venv venv
-        working-directory: python-greetings
-
-      - name: Install requirements
-        run: ./venv/bin/python -m pip install -r requirements.txt
-        working-directory: python-greetings
-
-      - name: Start app on port 7001
-        run: |
-          pm2 start "./venv/bin/python app.py --port=7001" --name greetings-dev
-          pm2 save
-        working-directory: python-greetings
+          app_path: python-greetings
+          env_name: dev
+          port: "7001"
 
   tests-on-dev:
     runs-on: self-hosted
