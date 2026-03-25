@@ -1,5 +1,5 @@
 name: Install Python Dependencies
-description: Clone python-greetings repo, create virtual environment and install dependencies
+description: Clone python-greetings repo, create venv and install dependencies
 
 inputs:
   app_path:
@@ -9,25 +9,25 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout pipeline repository
+    - name: Checkout pipeline repo
       uses: actions/checkout@v4
 
-    - name: Clone python-greetings repository
+    - name: Clone python app
       uses: actions/checkout@v4
       with:
         repository: mtararujs/python-greetings
         path: ${{ inputs.app_path }}
 
-    - name: Show install info
+    - name: Show install message
       shell: bash
-      run: echo "Creating Python virtual environment and installing dependencies..."
+      run: echo "Installing all required dependencies.."
 
     - name: Create virtual environment
       shell: bash
       working-directory: ${{ inputs.app_path }}
       run: python3 -m venv venv
 
-    - name: Install Python dependencies
+    - name: Install requirements
       shell: bash
       working-directory: ${{ inputs.app_path }}
       run: ./venv/bin/python -m pip install -r requirements.txt
