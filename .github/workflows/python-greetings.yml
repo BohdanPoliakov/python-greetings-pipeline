@@ -1,12 +1,29 @@
-name: Test Pipeline
+name: Python Greetings Pipeline
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-job:
+  install-pip-deps:
     runs-on: self-hosted
 
     steps:
-      - name: Say hello
-        run: echo "Hello from your self-hosted runner"
+      - name: Checkout pipeline repo
+        uses: actions/checkout@v4
+
+      - name: Clone python app
+        uses: actions/checkout@v4
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Show message
+        run: echo "Installing dependencies..."
+
+      - name: Create virtual environment
+        run: python3 -m venv venv
+        working-directory: python-greetings
+
+      - name: Install requirements
+        run: ./venv/bin/python -m pip install -r requirements.txt
+        working-directory: python-greetings
