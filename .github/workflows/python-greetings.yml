@@ -8,6 +8,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Checkout pipeline repo
+        uses: actions/checkout@v4
+
       - name: Run install composite action
         uses: ./.github/actions/install-python-deps
         with:
