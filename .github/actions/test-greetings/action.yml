@@ -24,10 +24,10 @@ runs:
 
     - name: Install npm dependencies
       shell: bash
-      run: npm install
       working-directory: tests
+      run: npm install
 
     - name: Run tests
       shell: bash
-      run: npm run greetings greetings_${{ inputs.env }}
       working-directory: tests
+      run: npm run greetings greetings_${{ inputs.env }}
